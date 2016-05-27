@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="transparent">#00000000</color>
+    <color name="link">#0000EE</color>
+    <color name="red">#FF0000</color>
+    <color name="blue">#0000CC</color>
+    <color name="toolbar_color">#208fe4</color>
+    <color name="green">#30CC33</color>
+    <color name="white">#ffffff</color>
+    <color name="light_gray">#eeeeee</color>
+    <color name="Black">#000000</color>
+    <color name="CT_dark">#CC005B7F</color>
+    <color name="T_dark">#CC7D4900</color>
+    <color name="CT_trans">#66005B7F</color>
+    <color name="T_trans">#667D4900</color>
+    <color name="black_semi_transparent">#B2000000</color>
+</resources>
