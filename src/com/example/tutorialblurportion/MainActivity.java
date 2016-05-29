@@ -1,5 +1,7 @@
 package com.example.tutorialblurportion;
 
+import com.example.tutorialblurportion.WorkTask.WorkTaskListener;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -13,14 +15,17 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements WorkTaskListener {
 	private ImageView imageView;
 	private SeekBar sbSize, sbBlur;
 	
 	private Bitmap texture;
+	private Bitmap bluredTexture;
 
 	private float lastTouchedPositionX;
 	private float lastTouchedPositionY;
+	
+	private int lastBlurAmount = 0;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +70,14 @@ public class MainActivity extends Activity {
 
 
 		int blurAmount = sbBlur.getProgress() +1;
+		boolean needBlur = true;
+		if (lastBlurAmount == blurAmount) {
+			needBlur = false;
+		} else {
+			lastBlurAmount = blurAmount;
+		}
+		
+		
 		int maskSize = sbSize.getProgress();
 		if (maskSize < BitmapUtils.MASK_MIN_SIZE) {
 			maskSize = BitmapUtils.MASK_MIN_SIZE;
@@ -86,7 +99,7 @@ public class MainActivity extends Activity {
 		float diffY = 0;
 		float newX = cx;
 		float newY = cy;
-		Log.e("TAG", "t: W:" + texture.getWidth() + " H: " + texture.getHeight());
+		//Log.e("TAG", "t: W:" + texture.getWidth() + " H: " + texture.getHeight());
 		
 		//Fixing the mask position so it will be correct no matter the image size or density
 		if (texture.getHeight() > imageView.getHeight()) {
@@ -111,11 +124,11 @@ public class MainActivity extends Activity {
 		
 		
 		
-		Log.e("TAG", "pos1: X:" + newX + " Y: " + newY);
+		//Log.e("TAG", "pos1: X:" + newX + " Y: " + newY);
 		newX = NumbUtils.fixPos(newX, texture.getWidth(), maskSize);
 		newY = NumbUtils.fixPos(newY, texture.getHeight(), maskSize);
 		
-		new WorkTask(this, imageView, blurAmount, texture, newX, newY,maskSize).execute();
+		new WorkTask(this, this, blurAmount,texture, bluredTexture, newX, newY,maskSize, needBlur, texture.getDensity()).execute();
 		
 		int maxSize = 0;
 		if (texture.getWidth() > texture.getHeight()) {
@@ -123,7 +136,6 @@ public class MainActivity extends Activity {
 		} else {
 			maxSize = texture.getWidth();
 		}
-		Log.e("TAG", "Max mask size:" + maxSize );
 		sbSize.setMax(maxSize);
 	}
     
@@ -149,5 +161,11 @@ public class MainActivity extends Activity {
 		}
     	
     };
+
+	@Override
+	public void onWorkCompleted(WorkTask task) {
+		imageView.setImageBitmap(task.result);
+		bluredTexture = task.bluredSource;
+	}
 
 }

@@ -48,7 +48,6 @@ public class BitmapUtils {
 		int newX = (int) NumbUtils.fixPos(maskPosX, source.getWidth(), mask.getWidth());
 		
 		bitmap = Bitmap.createBitmap(bitmap, newX, newY, maskWidth, maskHeight);
-		Log.e("TAG", "D2:" + bitmap.getDensity());
 		// Apply mask
 		Canvas canvas = new Canvas(bitmap);
 		//Create new clip bounds
@@ -66,7 +65,7 @@ public class BitmapUtils {
 		return bitmap;
 	}
 	
-	public static Bitmap createRadialBlurMask(float radius, int width, int height) {
+	public static Bitmap createRadialBlurMask(float radius, int width, int height, int density) {
 		                                          //(centerX,  centerY,  radius,  centerColor,  edgeColor,  tileMode)
 		RadialGradient gradient = new RadialGradient(width / 2, height / 2, radius, 0xFF000000, 0x00FFFFFF, TileMode.CLAMP);
 	    Paint p = new Paint();
@@ -75,12 +74,11 @@ public class BitmapUtils {
 
 	    
 	    Bitmap bitmap = Bitmap.createBitmap(width,height, Config.ARGB_8888);
-	    bitmap.setDensity(160);
+	    bitmap.setDensity(density);
 	    Canvas c = new Canvas(bitmap);
 	    
 	    c.drawCircle(width / 2, height / 2, radius, p);
-	    Log.e("TAG", "maskSize: W:" + bitmap.getWidth() + " H: " + bitmap.getHeight());
-		Log.e("TAG", "D1:" + bitmap.getDensity());
+	    //Log.e("TAG", "maskSize: W:" + bitmap.getWidth() + " H: " + bitmap.getHeight());
 	    return bitmap;
 	}
 	
@@ -95,10 +93,10 @@ public class BitmapUtils {
 		return BitmapFactory.decodeResource(res, drawable, options);
 	}
 	
-	public static Bitmap renderScriptBlur(Bitmap originalBitmap, Context context, float radius) {
+	public static Bitmap renderScriptBlur(Bitmap originalBitmap, Context context, float radius, int density) {
 		Bitmap outBitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(),
 				Bitmap.Config.ARGB_8888);
-		outBitmap.setDensity(160);
+		outBitmap.setDensity(density);
 
 		RenderScript rs = RenderScript.create(context);
 		ScriptIntrinsicBlur blurScript = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
