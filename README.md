@@ -1,7 +1,7 @@
 # Android-BlurPortion
 "Point to un-blur" code for Android
 
-Will allow for tilt-shift effect later on.
+Will allow for better tilt-shift effect later on.
 
 Dynamically create mask's
 Makes use of reander scripts and PorterDuffXfer
