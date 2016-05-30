@@ -1,13 +1,13 @@
 package com.example.tutorialblurportion;
 
 import com.example.tutorialblurportion.WorkTask.WorkTaskListener;
+import com.example.tutorialblurportion.mask.RadialMask;
+import com.example.tutorialblurportion.mask.TiltShiftMask;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -59,7 +59,7 @@ public class MainActivity extends Activity implements WorkTaskListener {
 		
 		
 		
-		texture = BitmapUtils.getDrawableAsBitmap(MainActivity.this, R.drawable.texture);
+		texture = BitmapUtils.getDrawableAsBitmap(MainActivity.this, R.drawable.tilt_4);
 		Log.e("TAG", "Loaded and ready");
     }
 
@@ -128,7 +128,10 @@ public class MainActivity extends Activity implements WorkTaskListener {
 		newX = NumbUtils.fixPos(newX, texture.getWidth(), maskSize);
 		newY = NumbUtils.fixPos(newY, texture.getHeight(), maskSize);
 		
-		new WorkTask(this, this, blurAmount,texture, bluredTexture, newX, newY,maskSize, needBlur, texture.getDensity()).execute();
+		TiltShiftMask mask = new TiltShiftMask(texture.getWidth(), maskSize, texture.getDensity());
+		RadialMask mask2 = new RadialMask(maskSize, maskSize, maskSize / 2, texture.getDensity());
+		
+		new WorkTask(this, this,mask2, blurAmount,texture, bluredTexture, newX, newY,maskSize, needBlur, texture.getDensity()).execute();
 		
 		int maxSize = 0;
 		if (texture.getWidth() > texture.getHeight()) {

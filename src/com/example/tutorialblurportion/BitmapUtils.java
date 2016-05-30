@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -46,7 +48,13 @@ public class BitmapUtils {
 		// Crop bitmap to fit mask
 		int newY = (int) NumbUtils.fixPos(maskPosY, source.getHeight(), mask.getHeight());
 		int newX = (int) NumbUtils.fixPos(maskPosX, source.getWidth(), mask.getWidth());
+		Log.e("TAG", "source Size: w" + source.getWidth() + " h:" + source.getHeight());
 		
+		Matrix matrix = new Matrix();
+
+		matrix.setRotate(-45);
+
+		//Bitmap rotatedBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 		bitmap = Bitmap.createBitmap(bitmap, newX, newY, maskWidth, maskHeight);
 		// Apply mask
 		Canvas canvas = new Canvas(bitmap);
@@ -57,10 +65,17 @@ public class BitmapUtils {
 		
 		Paint paint = new Paint();
 		paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+		
+		
+		
+		
 		canvas.drawBitmap(mask,
 						maskPosX < 0 ? maskPosX : 0,
 						maskPosY < 0 ? maskPosY : 0, paint);
 
+		
+
+		
 		mask.recycle();
 		return bitmap;
 	}
@@ -80,6 +95,37 @@ public class BitmapUtils {
 	    c.drawCircle(width / 2, height / 2, radius, p);
 	    //Log.e("TAG", "maskSize: W:" + bitmap.getWidth() + " H: " + bitmap.getHeight());
 	    return bitmap;
+	}
+	
+	public static Bitmap CreateTiltShiftMask(int height, int width, int density) {
+		int halfH = height / 2;
+		
+		LinearGradient shaderTop = new LinearGradient(0,
+				0,
+				0,
+				halfH,
+				0x00FFFFFF, 0xFF000000,TileMode.CLAMP);
+		
+		LinearGradient shaderBottom = new LinearGradient(0,
+				height,
+				0,
+				halfH,
+				0x00FFFFFF, 0xFF000000,TileMode.CLAMP);
+		
+		Paint p = new Paint();
+		p.setDither(true);
+		p.setShader(shaderTop);
+	//	p.setXfermode(new PorterDuffXfermode(Mode.DST_IN));
+		
+		Bitmap bitmap = Bitmap.createBitmap(width,height, Config.ARGB_8888);
+	    bitmap.setDensity(density);
+	    
+	    Canvas c = new Canvas(bitmap);
+	    c.drawRect(0, 0, width, height / 2, p);
+	    p.setShader(shaderBottom);
+	    c.drawRect(0, height / 2, width, height, p);
+		
+		return bitmap;
 	}
 	
 	public static Bitmap getDrawableAsBitmap(Context context, int drawable) {
